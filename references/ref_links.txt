@@ -1,0 +1,2 @@
+https://github.com/TovlyDeutsch/Linguistic-Features-for-Readability
+https://github.com/shlomihod/deep-text-eval/
