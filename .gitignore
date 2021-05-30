@@ -134,3 +134,8 @@ data/
 *.csv
 *.tsv
 
+#vscode
+.vscode
+
+#WSL
+*Zone.Identifier

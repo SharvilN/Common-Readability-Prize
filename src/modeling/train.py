@@ -8,7 +8,7 @@ import cross_validation
 import dispatcher
 import loss
 import metrics
-import feature_generator
+import extract_features
 
 
 TRAINING_DATA = os.environ.get('TRAINING_DATA')
