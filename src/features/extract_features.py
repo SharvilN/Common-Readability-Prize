@@ -4,7 +4,7 @@ import collections
 import numpy as np
 import pandas as pd
 
-import utils
+from utils import utils
 
 from textacy import text_stats
 from textacy.text_stats import readability
@@ -122,9 +122,10 @@ class FeatureGenerator:
 
 if __name__ == '__main__':
     pass
+    # import sys
+    # sys.path.append('/home/sharvil/studies/ml/Common-Readability-Prize/src')
     # sample = pd.read_csv('../data/raw/train.csv').sample(5)
     # fe = FeatureGenerator(sample, spacy.load('en_core_web_sm'))
     # output = fe.extract_features()
-
     # output.to_csv('../data/interim/sample_fe.csv')
     # print(output)
