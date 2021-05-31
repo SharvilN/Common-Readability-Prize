@@ -6,8 +6,8 @@ import pandas as pd
 
 import neptune.new as neptune
 
-from modeling import dispatcher
-from evaluation import loss
+from commonlit_readability.modeling import dispatcher
+from commonlit_readability.evaluation import loss
 
 def train(train_path, fold, store_model_at, model):
     df = pd.read_csv(train_path)

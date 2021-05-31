@@ -1,15 +1,13 @@
 import argparse
 import pandas as pd
 
+from typing import List, Optional
+
 from commonlit_readability.dataset import cross_validation
 
-def run(args):
-    data_path = args.data_path
-    output_path = args.output_path
-    target_cols = args.target_cols.split(',')
-    n_folds = args.n_folds
+def run(data_path: str, output_path: str, target_cols: List[str], n_folds: Optional[int] = 5) -> None:
 
-    print(target_cols)
+    print(f'Target columns : {target_cols}')
     print(f'Reading data from {data_path}')
     df = pd.read_csv(data_path)
     cv = cross_validation.CrossValidation(df,
@@ -25,7 +23,7 @@ def run(args):
     print(df_split.groupby(by=['kfold'])['target'].median())
 
     print(f'Saving train folds to {output_path}')
-    df_split.to_csv(output_path)
+    df_split.to_csv(output_path, index=False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -34,5 +32,11 @@ if __name__ == '__main__':
     parser.add_argument('--target_cols', help='to specify target columns of data')
     parser.add_argument('--n_folds', type=int, default=5, help='specifies the number of splits to perform on data')
 
-    run(parser.parse_args())
+    args = parser.parse_args()
+    data_path = args.data_path
+    output_path = args.output_path
+    target_cols = args.target_cols.split(',')
+    n_folds = args.n_folds
+
+    run(data_path, output_path, target_cols, n_folds)
 
