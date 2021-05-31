@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
-from cross_validation import CrossValidation
+
+from commonlit_readability.dataset import cross_validation
 
 def run(args):
     data_path = args.data_path
@@ -11,11 +12,11 @@ def run(args):
     print(target_cols)
     print(f'Reading data from {data_path}')
     df = pd.read_csv(data_path)
-    cv = CrossValidation(df,
+    cv = cross_validation.CrossValidation(df,
                         target_cols,
                         n_folds=n_folds,
                         shuffle=True,
-                        problem_type=CrossValidation.ProblemType.SINGLE_COL_REGRESSION)
+                        problem_type=cross_validation.CrossValidation.ProblemType.SINGLE_COL_REGRESSION)
     
     print(f'Generating folds...')
     df_split = cv.split()
