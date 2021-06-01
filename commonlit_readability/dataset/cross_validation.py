@@ -13,16 +13,16 @@ from sklearn import model_selection
 - holdout
 '''
 
-class CrossValidation:
-
-    class ProblemType(Enum):
+class ProblemType(Enum):
         BINARY = auto(),
         MULTICLASS = auto(),
-        SINGLE_COL_REGRESSION = auto(),
+        REGRESSION = auto(),
         MULTI_COL_REGRESSION = auto(),
         HOLDOUT = auto(),
         MULTILABEL = auto()
-        
+
+
+class CrossValidation:
 
     def __init__(
             self,
@@ -50,7 +50,7 @@ class CrossValidation:
         self.df['kfold'] = -1
 
     def split(self):
-        if self.problem_type in (CrossValidation.ProblemType.BINARY, CrossValidation.ProblemType.MULTICLASS):
+        if self.problem_type in (ProblemType.BINARY, ProblemType.MULTICLASS):
             if self.n_targets != 1:
                 raise Exception(f'Invalid number of targets {self.n_targets} for selected problem type: {self.problem_type}') 
             
@@ -61,10 +61,10 @@ class CrossValidation:
                 print(len(train_idx), len(val_idx))
                 self.df.loc[val_idx, 'kfold'] = fold
 
-        elif self.problem_type in (CrossValidation.ProblemType.SINGLE_COL_REGRESSION, CrossValidation.ProblemType.MULTI_COL_REGRESSION):
-            if self.n_targets != 1 and self.problem_type == CrossValidation.ProblemType.SINGLE_COL_REGRESSION:
+        elif self.problem_type in (ProblemType.REGRESSION, ProblemType.MULTI_COL_REGRESSION):
+            if self.n_targets != 1 and self.problem_type == ProblemType.REGRESSION:
                 raise Exception(f'Invalid combination of number of targets {self.n_targets} and problem type {self.problem_type}')
-            if self.n_targets < 2 and self.problem_type == CrossValidation.ProblemType.MULTI_COL_REGRESSION:
+            if self.n_targets < 2 and self.problem_type == ProblemType.MULTI_COL_REGRESSION:
                 raise Exception(f'Invalid combination of number of targets {self.n_targets} and problem type {self.problem_type}')
             
             target = self.target_cols[0]
@@ -92,14 +92,14 @@ class CrossValidation:
             self.df = self.df.drop("bins", axis=1)
 
         
-        elif self.problem_type == CrossValidation.ProblemType.HOLDOUT:
+        elif self.problem_type == ProblemType.HOLDOUT:
             holdout_pctg = self.holdout_pct
             n_holdout_samples = int(len(self.df) * holdout_pctg / 100)
             self.df.loc[:n_holdout_samples, 'kfold'] = 0
             self.df.loc[n_holdout_samples: , 'kfold'] = 1
             print(n_holdout_samples)
 
-        elif self.problem_type == CrossValidation.ProblemType.MULTILABEL:
+        elif self.problem_type == ProblemType.MULTILABEL:
             if self.n_targets != 1:
                 raise Exception(f'Invalid combination of number of targets {self.n_targets} and problem type {self.problem_type}')
 
