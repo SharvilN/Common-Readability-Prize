@@ -38,6 +38,7 @@ if __name__ == '__main__':
     output_path = args.output_path
     target_cols = args.target_cols.split(',')
     n_folds = args.n_folds
+    problem_type=cross_validation.ProblemType[args.problem_type.upper()]
 
-    run(data_path, output_path, target_cols, n_folds)
+    run(data_path, output_path, target_cols, problem_type, n_folds)
 

@@ -1,5 +1,6 @@
 import spacy
 import textacy
+import argparse
 import collections
 import numpy as np
 import pandas as pd
@@ -138,11 +139,14 @@ class FeatureGenerator:
             self.output[cols] = vectors
 
 if __name__ == '__main__':
-    pass
-    # import sys
-    # sys.path.append('/home/sharvil/studies/ml/Common-Readability-Prize/')
-    # sample = pd.read_csv('../../data/raw/train.csv').sample(5)
-    # fe = FeatureGenerator(sample, spacy.load('en_core_web_sm'))
-    # output = fe.extract_features()
-    # output.to_csv('../../data/interim/sample_fe.csv', index=False)
-    # print(output)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_path", help="to provide csv/text file path")
+    parser.add_argument("--output_path", help="to provide path for storing output file")
+    args = parser.parse_args()
+    
+    df = pd.read_csv(args.input_path)
+    fe = FeatureGenerator(df, spacy.load('en_core_web_lg'))
+    output = fe.extract_features()
+    print(output.head())
+    output.to_csv(args.output_path, index=False)

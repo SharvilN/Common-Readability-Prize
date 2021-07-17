@@ -4,14 +4,11 @@ import argparse
 import numpy as np
 import pandas as pd
 
-import neptune.new as neptune
-
 from commonlit_readability.modeling import dispatcher
 from commonlit_readability.evaluation import loss
 
 def train(train_path, fold, store_model_at, model):
     df = pd.read_csv(train_path)
-
     train = df[df.kfold != fold]
     val = df[df.kfold == fold]
 
@@ -35,10 +32,10 @@ def train(train_path, fold, store_model_at, model):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--fold', type='int', help='to specify which fold of cv to run')
-    parser.add_argument('--train_path', type='str', help='to provide training data path')
-    parser.add_argument('--store_model_at', type='str', help='to provide path for storing trained model')
-    parser.add_argument('--model', type='str', help='to dispatch a pariticular model (RF, LGB, etc.)')
+    parser.add_argument('--fold', type=int, help='to specify which fold of cv to run')
+    parser.add_argument('--train_path', help='to provide training data path')
+    parser.add_argument('--store_model_at', help='to provide path for storing trained model')
+    parser.add_argument('--model', help='to dispatch a pariticular model (RF, LGB, etc.)')
 
     args = parser.parse_args()
 

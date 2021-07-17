@@ -10,4 +10,5 @@ N_FOLDS=5
 python commonlit_readability/dataset/create_folds.py --data_path=$DATA_PATH \
                        --output_path=$CV_DATA_PATH \
                        --target_cols=$TARGET_COLS \
-                       --n_folds=$N_FOLDS
+                       --n_folds=$N_FOLDS \
+                       --problem_type=REGRESSION
