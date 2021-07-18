@@ -9,7 +9,7 @@ from textacy import text_stats
 from textacy.text_stats import readability
 
 from commonlit_readability.utils import utils
-from commonlit_readability.dataset import preprocessing
+from commonlit_readability.dataset.preprocess import TextPreprocessor
 
 class FeatureGenerator:
 
@@ -30,7 +30,8 @@ class FeatureGenerator:
 
     def _preprocess(self):
         print('Preprocessing data...')
-        self.raw.loc[:, 'preprocessed_excerpt'] = self.raw['excerpt'].apply(preprocessing.preprocess)
+        preprocessor = TextPreprocessor(pipelines=["unicode", "whitespace", "accents"])
+        self.raw.loc[:, 'preprocessed_excerpt'] = self.raw['excerpt'].apply(preprocessor.run)
         self.output.loc[:, 'preprocessed_excerpt'] = self.raw['preprocessed_excerpt']
 
     def _extract_traditional_features(self):
