@@ -8,8 +8,8 @@ import pandas as pd
 from textacy import text_stats
 from textacy.text_stats import readability
 
-from commonlit_readability.utils import utils
-from commonlit_readability.dataset.preprocess import TextPreprocessor
+from readability_baseline.utils import utils
+from readability_baseline.features import TextPreprocessor
 
 class FeatureGenerator:
 

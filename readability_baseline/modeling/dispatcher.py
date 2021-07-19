@@ -4,7 +4,6 @@ from sklearn import ensemble
 from sklearn import linear_model
 from sklearn import pipeline
 from sklearn import preprocessing
-from sklearn import decomposition
 from sklearn import svm
 
 MODELS = {

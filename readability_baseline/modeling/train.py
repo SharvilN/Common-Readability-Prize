@@ -4,8 +4,8 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from commonlit_readability.modeling import dispatcher
-from commonlit_readability.evaluation import loss
+from readability_baseline.modeling import dispatcher
+from readability_baseline.evaluation import loss
 
 def train(train_path, fold, store_model_at, model):
     df = pd.read_csv(train_path)
