@@ -8,13 +8,14 @@ from metrics import AverageMeter
 class Trainer:
 
     def __init__(self, model, log_interval, eval_internal, epochs, 
-                optimizer, lr_scheduler):
+                optimizer, lr_scheduler, model_dir):
         self.model = model
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
         self.epochs = epochs
         self.log_interval = log_interval
         self.eval_interval = eval_internal
+        self.model_dir = model_dir
         self.evaluator = Evaluator(self.model)
 
 
@@ -30,6 +31,9 @@ class Trainer:
                 lr_scheduler=self.lr_scheduler,
                 result_dict=result_dict
             )
+        
+        print(f"Saving model in {self.model_dir}....")
+        torch.save(self.model.state_dict(), f'{self.model_dir}/model-fold-{fold}_dict')
         
         return result_dict
 
@@ -57,8 +61,14 @@ class Trainer:
             if batch_idx % self.eval_interval == 0:
                 result_dict = self.evaluator.evaluate(
                     valid_loader=valid_loader,
-                    result_dict=result_dict
+                    result_dict=result_dict,
+                    epoch=epoch
                 )
+            
+            result_dict["train_loss"].append(losses.avg)
+            print("--------Training Results Summary------")
+            print(f"Epoch: {epoch}, train_loss: {losses.avg}")
+        return result_dict
     
     def _train_loop_for_one_step(self, input_ids, attention_mask, token_type_ids, label):
         self.optimizer.zero_grad()
@@ -75,25 +85,29 @@ class Evaluator:
     def __init__(self, model):
         self.model = model
 
-    def evaluate(self, valid_loader, result_dict):
+    def evaluate(self, epoch, valid_loader, result_dict):
         self.model.eval()
         losses = AverageMeter()
-        for batch_idx, batch in enumerate(valid_loader):
-            input_ids, = batch["input_ids"].to(config.DEVICE)
-            attention_mask = batch["attention_mask"].to(config.DEVICE)
-            token_type_ids = batch["token_type_ids"].to(config.DEVICE)
-            model = model.to(config.DEVICE)
+        with torch.no_grad():
+            for batch_idx, batch in enumerate(valid_loader):
+                input_ids, = batch["input_ids"].to(config.DEVICE)
+                attention_mask = batch["attention_mask"].to(config.DEVICE)
+                token_type_ids = batch["token_type_ids"].to(config.DEVICE)
+                model = model.to(config.DEVICE)
 
-            loss = self._eval_loop_for_one_step(
-                input_ids,
-                attention_mask,
-                token_type_ids
-            )
-            losses.update(loss.item(), input_ids.size(0))
-        return result_dict        
+                loss = self._eval_loop_for_one_step(
+                    input_ids,
+                    attention_mask,
+                    token_type_ids
+                )
+                losses.update(loss.item(), input_ids.size(0))
+                print("----------Validation Results Summary---------")
+                print(f"Epoch: {epoch}, valid_loss: {losses.avg}")
+                result_dict["valid_loss"].append(losses.avg)
+
+        return result_dict
 
     def _eval_loop_for_one_step(self, input_ids, attention_mask, token_type_ids):
-        with torch.no_grad():
-            outputs = self.model(input_ids, attention_mask, token_type_ids)
-            loss, logits = outputs[:2]
-            return loss
+        outputs = self.model(input_ids, attention_mask, token_type_ids)
+        loss, logits = outputs[:2]
+        return loss

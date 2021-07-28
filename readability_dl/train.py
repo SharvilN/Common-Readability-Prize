@@ -15,7 +15,7 @@ from readability_baseline.dataset.cross_validation import CrossValidation, Probl
 
 from engine import Trainer
 
-def run(df, fold):
+def run(df, fold, model_dir):
 
     xtrain = df[df["fold"] == fold]
     xvalid = df[df ["fold"] != fold]
@@ -52,7 +52,8 @@ def run(df, fold):
         lr_scheduler=lr_scheduler,
         epochs=config.EPOCHS,
         log_interval=config.LOG_INTERVAL,
-        eval_interval=config.EVAL_INTERVAL
+        eval_interval=config.EVAL_INTERVAL,
+        model_dir=model_dir
     )
     result_dict = trainer.train(
         train_loader=train_loader,
@@ -61,16 +62,21 @@ def run(df, fold):
         fold=fold
     )
 
+    
+
 
 if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--fold", type=int, help="to specify # of fold")
+    parser.add_argument("--train_path", help="to specify train data path")
+    parser.add_argument("--cv_path", help="to specify cross validated data path")
+    parser.add_argument("--model_dir", help="to specify path for storing trained model")
     args = parser.parse_args()
 
-    if not os.path.exists(config.CV_PATH):
-        raw_train = pd.read_csv(config.TRAIN_PATH)
+    if not os.path.exists(args.cv_path):
+        raw_train = pd.read_csv(args.train_path)
         cv = CrossValidation(
             raw_train, 
             config.TARGET_COLS, 
@@ -79,11 +85,10 @@ if __name__ == "__main__":
             n_folds=5
         )
         df_folds = cv.split()
-        df_folds.to_csv(config.CV_PATH)
+        df_folds.to_csv(args.cv_path)
     else:
-        df_folds = pd.read_csv(config.CV_PATH)
+        df_folds = pd.read_csv(args.cv_path)
 
-
-    run(df_folds, args.fold)
+    run(df_folds, args.fold, args.model_dir)
 
 

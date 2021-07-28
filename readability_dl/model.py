@@ -29,5 +29,4 @@ class CLRPModel(nn.Module):
         if labels is not None:
             loss = loss_fn(logits, labels)
         
-        output = (logits,) + outputs[2:]
-        return ((loss,) + output) if loss is not None else output
+        return (loss, logits) if loss is not None else logits

@@ -1,7 +1,3 @@
-TRAIN_PATH = "data/raw/train.csv"
-TEST_PATH = "data/raw/test.csv"
-CV_PATH = "data/interim/clrp-dl-folds.csv"
-
 TARGET_COLS = ["target"]
 MAX_LEN = 128
 CHECKPOINT = "distil-bert-uncased"
